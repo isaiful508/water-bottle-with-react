@@ -1,0 +1,10 @@
+.bottle{
+    border: 2px solid peru;
+    border-radius: 15px;
+    padding: 20px;
+
+}
+
+.bottle img{
+    width: 200px;
+}
