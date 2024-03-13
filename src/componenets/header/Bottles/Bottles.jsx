@@ -2,7 +2,9 @@ import { useEffect } from "react";
 import { useState } from "react";
 import Bottle from "../Bottle/Bottle";
 import './Bootles.css'
-import { addToLS, getStoredCart } from "../../../utilities/localStorage";
+import { addToLS, getStoredCart, removeFromLS } from "../../../utilities/localStorage";
+import Cart from "../Cart/Cart";
+import PropTypes from 'prop-types'
 
 
 const Bottles = () => {
@@ -22,9 +24,27 @@ const Bottles = () => {
     //load cart from local storage
     useEffect(() => {
         console.log('call the use effect', bottles.length)
-        if (bottles.length > 0) {
+        if (bottles.length) {
             const storedCart = getStoredCart();
-            console.log(storedCart);
+            console.log(storedCart, bottles);
+
+            const savedCart = [];
+            for( const id of storedCart){
+                console.log(id);
+
+                const bottle = bottles.find(bottle => bottle.id === id);
+
+                if(bottle){
+                    savedCart.push(bottle);
+                }
+
+
+            }
+
+            console.log('saved cart', savedCart);
+            setCart(savedCart);
+
+
         }
     }, [bottles])
 
@@ -34,13 +54,23 @@ const Bottles = () => {
         addToLS(bottle.id);
     }
 
-
+const handleRemoveFromCArt = (id) =>{
+    // visual cart remve
+    const remainingCart = cart.filter(bottle => bottle.id !== id)
+    setCart(remainingCart);
+   //remove from LS
+removeFromLS(id);
+}
 
 
     return (
         <div>
             <h2>Bottles Available: {bottles.length}</h2>
-            <h4>Cart: {cart.length}</h4>
+
+        <Cart cart={cart} handleRemoveFromCArt={handleRemoveFromCArt}></Cart>
+
+
+           
             <div className="bottle-conatiner">
 
                 {
@@ -56,5 +86,10 @@ const Bottles = () => {
         </div>
     );
 };
+
+Bottle.propTypes ={
+    bottle: PropTypes.object.isRequired,
+    handleAddCart: PropTypes.func.isRequired
+}
 
 export default Bottles;
